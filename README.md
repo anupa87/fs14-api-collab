@@ -18,7 +18,8 @@
 - lastName: last name of user
 - email: email address, must be unique
 - password: password which meets requirements set by server
-- role: descriptor of user's role, to establish what action they can perform in the REST API
+- role: descriptor of user's role, to establish what action they can perform in the REST API. roles are: admin, user
+- banned: boolean descriptor whether user can create changes in the server related to their profile or adding orders.
 
 ### Orders:
 
@@ -47,28 +48,45 @@ This will be decided based on the needed actions. So far, the actions are:
 ### /products
 
 1. GET request - get all products in the database. query strings can be appended to narrow the search, to paginate, filter (size, categories, price), and sort attribute. returns a mapping of products.
-2. POST request - add a new product to the database with the above mentioned attributes.
-
+2. POST request - add a new product to the database with the above mentioned attributes. returns new item and 200 code.
+   
 ### /products/:productId
 
-1. GET request- get a product according to it's unique identifier. returns one object.
-2. PATCH request - updates a product with it's identifier. returns updated item and 200 http code.
-3. DELETE request - remove a product according to it's identifier. returns 200 http code.
+3. GET request- get a product according to it's unique identifier. returns one object.
+4. PATCH request - updates a product with it's identifier. returns updated item and 200 http code.
+5. DELETE request - remove a product according to it's identifier. returns 200 http code.
 
 ### /auth
 
-1. POST request - creates an access token for the user to sign in, if the credentials are correctly filled.
+6. POST request - creates an access token for the user to sign in, if the credentials are correctly filled. returns token and 200 code.
+
+### /auth/:userId
+7. PATCH request - resets the password of users account once the password reset token is verified - user will need to sign in after receiving successful response. returns 200 code.
+8. HEAD request - user gets a password reset code in their email. returns 200 code to indicate success.
+
+### /auth/:userId/permission
+9. PATCH request - used to ban or unban a user. the payload determines this. only admin can use this route, and is verified according to payload of decrypted access token. returns 200 code and new (changed) permissions data. 
 
 ### /users
 
-1. POST request - create (sign up) a new user in the database. returns 200 code, and user will need to sign to get access token.
+10. POST request - create (sign up) a new user in the database. returns 200 code - user will need to sign in to get access token.
 
 ### /users/:userId
 
-1. PATCH request - user can change their first name, last name or email address
+11. PATCH request - user can change their first name, last name or email address. returns new data and 200 code.
 
+### /orders/
+
+12. POST request - adds a new order to the database with the product and user attributes. returns new data and 200 code.
+13. GET request - retrieves mapping of orders in the database. a user can only access this endpoint by appending an access token to the request header, which then retrieves their own orders.
+
+### /orders/:orderId
+
+14. GET request gets an order according to order identifier. returns one order.
 
 ## 5. Swagger output
+
+To be discussed and delegated amongst team.
 
 # Design a REST API - Design First (NO CODE)
 
