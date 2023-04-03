@@ -1,3 +1,15 @@
+# E-commerce API documentation from Group 5
+
+## 1. What the data will look like
+
+## 2. What entities the API will have
+
+## 3. What is relation between entities
+
+## 4. What kind of endpoints the API will have
+
+## 5. Swagger output
+
 # Design a REST API - Design First (NO CODE)
 
 Before diving into the assignment, make sure you review the slides and understand the theortical part and best practices.
