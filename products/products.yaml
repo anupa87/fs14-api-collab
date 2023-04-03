@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: products
+  description: endpoint guide for getting, mutating products in the database
+  version: 1.0.0
+  contact:
+    email: koji.gabriel218@gmail.com
+    name: Koji Inoue
+paths:
+  /products:
+    get:
+      description: get all products in the database. query strings can be appended to narrow the search, to paginate, filter (size, categories, price), and sort attribute. returns a mapping of products.
+      responses:
+        "200":
+          description: all products retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/products"
+    post:
+      description: add a new product to the database with the above mentioned attributes. returns new item and 200 code.
+      requestBody:
+        description: new product created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product'
+      responses:
+        "200":
+          description: product created successfully
+    
+  /products/{productId}:
+    get:
+      description: get a product according to it's unique identifier. returns one object
+      parameters:
+        - name: productId
+          required: true
+          in: path
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: course successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/product"
+    patch:
+      description: updates a product with it's identifier. returns updated item and 200 http code.
+      parameters:
+        - name: productId
+          required: true
+          in: path
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: product successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/product"
+    delete:
+      description: remove a product according to it's identifier. returns 200 http code.
+      parameters:
+        - name: productId
+          required: true
+          in: path
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: product successfully deleted.
+        
+components:
+  schemas:
+    products:
+      type: array
+      items:
+        type: object
+        properties:
+          productId:
+            type: integer
+          productName:
+            type: string
+          description:
+            type: string
+          categories:
+            type: array
+            items:
+             type: string
+          size:
+            type: string
+          price:
+            type: number
+    product:
+      type: object
+      properties:
+        productId:
+          type: integer
+        productName:
+          type: string
+        description:
+          type: string
+        categories:
+          type: array
+          items:
+           type: string
+        size:
+          type: string
+        price:
+          type: number
+
