@@ -1,0 +1,235 @@
+openapi: 3.0.0
+info:
+  title: E-commerce API - User Related Endpoints
+  version: 1.0.0
+  description: Manage users, authentication, and permissions
+servers:
+  - url: https://{host}/api/v1
+    description: Main server
+paths:
+  /auth:
+    post:
+      summary: Authenticate user and create an access token
+      operationId: authenticateUser
+      requestBody:
+        description: User's email and password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email address, must be unique
+                password:
+                  type: string
+                  description: Password which meets requirements set by server
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: Access token created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Access token
+
+  /auth/{userId}:
+    patch:
+      summary: Reset user password
+      operationId: resetPassword
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique identifier of the user
+      requestBody:
+        description: New password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPassword:
+                  type: string
+                  description: New password which meets requirements set by server
+              required:
+                - newPassword
+      responses:
+        "200":
+          description: Password reset successfully
+
+    head:
+      summary: Send password reset email to the user
+      operationId: sendResetEmail
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique identifier of the user
+      responses:
+        "200":
+          description: Password reset email sent successfully
+
+  /auth/{userId}/permission:
+    patch:
+      summary: Update user permission (ban/unban)
+      operationId: updateUserPermission
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique identifier of the user
+      requestBody:
+        description: Banned status
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                banned:
+                  type: boolean
+                  description: Boolean descriptor whether user can create changes in the server related to their profile or adding orders
+              required:
+                - banned
+      responses:
+        "200":
+          description: User permission updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users:
+    post:
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        description: User to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{userId}:
+    get:
+      summary: Get a user by ID
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique identifier of the user
+      responses:
+        "200":
+          description: The requested user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      summary: Update a user
+      operationId: updateUserById
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Unique identifier of the user
+      requestBody:
+        description: Update user's first name, last name or email address
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  description: First name of user
+                lastName:
+                  type: string
+                  description: Last name of user
+                email:
+                  type: string
+                  format: email
+                  description: Email address, must be unique
+              required:
+                - firstName
+                - lastName
+                - email
+      responses:
+        "200":
+          description: User information updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+          description: Unique identifier of the user
+        firstName:
+          type: string
+          description: First name of user
+        lastName:
+          type: string
+          description: Last name of user
+        email:
+          type: string
+          format: email
+          description: Email address, must be unique
+        password:
+          type: string
+          description: Password which meets requirements set by server
+        role:
+          type: string
+          description: Descriptor of user's role, to establish what action they can perform in the REST API. Roles are "admin" and "user"
+        banned:
+          type: boolean
+          description: Boolean descriptor whether user can create changes in the server related to their profile or adding orders
+      required:
+        - userId
+        - firstName
+        - lastName
+        - email
+        - password
+        - role
+        - banned
