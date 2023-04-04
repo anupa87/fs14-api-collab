@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  title: orders
+  description: endpoint guide for getting, mutating orders in the database
+  version: 1.0.0
+  contact:
+    email: mehrdadmoradabadi@gmail.com
+    name: Mehrdad Moradabadi
+paths:
+  /orders:
+    get:
+      description: >-
+        retrieves mapping of orders in the database. a user can only access this
+        endpoint by appending an access token to the request header, which then
+        retrieves their own orders
+      responses:
+        '200':
+          description: all orders retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orders'
+    post:
+      description: >-
+        adds a new order to the database with the product and user attributes.
+        returns new data and 200 code.
+      requestBody:
+        description: new order created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/orders'
+      responses:
+        '200':
+          description: order created successfully
+  /orders/{orderId}:
+    get:
+      description: gets an order according to order identifier. returns one order
+      parameters:
+        - name: orderId
+          required: true
+          in: path
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: order successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/order'
+components:
+  schemas:
+    orders:
+      type: array
+      items:
+        type: object
+        properties:
+          orderId:
+            type: integer
+          userId:
+            type: integer
+          products:
+            type: object
+          date:
+            type: string
+    order:
+      type: object
+      properties:
+        orderId:
+          type: integer
+        userId:
+          type: integer
+        products:
+          type: object
+        date:
+          type: string
